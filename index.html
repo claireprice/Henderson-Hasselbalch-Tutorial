@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acid-Base Balance Workshop</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+    .step {
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input[type="number"], select, button {
+      width: auto;
+      padding: 5px;
+      margin: 5px 5px 5px 0;
+    }
+    .result {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: darkgreen;
+    }
+    .explanation {
+      background: #f2f2f2;
+      padding: 10px;
+      margin-top: 10px;
+      border-left: 4px solid #007BFF;
+      display: none;
+    }
+    .quiz {
+      margin-top: 20px;
+      background: #e6ffe6;
+      padding: 10px;
+      border-left: 4px solid green;
+    }
+    #summary {
+      display: none;
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background: #fff8dc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Henderson-Hasselbalch Calculator</h1>
+  <p>This tool guides you through calculating pH, bicarbonate (HCO₃⁻), or pCO₂ using the Henderson-Hasselbalch equation with step-by-step explanation.</p>
+
+  <div class="step">
+    <label>What would you like to calculate?</label><br>
+    <select id="calculationType" onchange="updateInputs()">
+      <option value="ph">pH</option>
+      <option value="hco3">HCO₃⁻ (Bicarbonate)</option>
+      <option value="pco2">pCO₂</option>
+    </select>
+  </div>
+
+  <div class="step">
+    <label>Load Example Values:</label><br>
+    <select onchange="loadExample(this.value)">
+      <option value="">--Select--</option>
+      <option value="ex1">Normal Case (pH)</option>
+      <option value="ex2">Respiratory Acidosis (HCO₃⁻)</option>
+      <option value="ex3">Respiratory Alkalosis (pCO₂)</option>
+      <option value="ex4">Metabolic Acidosis (Winters)</option>
+      <option value="ex5">Metabolic Alkalosis</option>
+    </select>
+  </div>
+
+  <div class="step">
+    <label for="hco3">HCO₃⁻ (mmol/L):</label>
+    <input type="number" id="hco3" step="0.1"><br>
+
+    <label for="pco2">pCO₂ (mmHg):</label>
+    <input type="number" id="pco2" step="0.1"><br>
+
+    <label for="ph">pH:</label>
+    <input type="number" id="ph" step="0.01"><br>
+  </div>
+
+  <button onclick="calculate()">Calculate</button>
+  <button onclick="toggleExplanation()">Show/Hide Explanation</button>
+
+  <p class="result" id="result"></p>
+  <div id="explanation" class="explanation"></div>
+  <div id="quiz" class="quiz"></div>
+  <div id="summary"></div>
+
+  <script>
+    function updateInputs() {
+      const type = document.getElementById('calculationType').value;
+      document.getElementById('hco3').disabled = (type === 'hco3');
+      document.getElementById('pco2').disabled = (type === 'pco2');
+      document.getElementById('ph').disabled = (type === 'ph');
+      document.getElementById('result').textContent = '';
+      document.getElementById('explanation').style.display = 'none';
+      document.getElementById('explanation').innerHTML = '';
+      document.getElementById('quiz').innerHTML = '';
+      document.getElementById('summary').style.display = 'none';
+    }
+
+    function toggleExplanation() {
+      const exp = document.getElementById('explanation');
+      exp.style.display = (exp.style.display === 'none') ? 'block' : 'none';
+    }
+
+    function toggleAnswer() {
+      const ans = document.getElementById('quiz-answer');
+      if (ans) ans.style.display = (ans.style.display === 'none') ? 'block' : 'none';
+    }
+
+    function loadExample(example) {
+      const data = {
+        ex1: { hco3: 24, pco2: 40, ph: '', type: 'ph' },
+        ex2: { hco3: '', pco2: 50, ph: 7.25, type: 'hco3' },
+        ex3: { hco3: 24, pco2: '', ph: 7.50, type: 'pco2' },
+        ex4: { hco3: 12, pco2: '', ph: 7.10, type: 'pco2' },
+        ex5: { hco3: 30, pco2: '', ph: 7.48, type: 'pco2' }
+      }[example];
+      if (data) {
+        document.getElementById('hco3').value = data.hco3;
+        document.getElementById('pco2').value = data.pco2;
+        document.getElementById('ph').value = data.ph;
+        document.getElementById('calculationType').value = data.type;
+        updateInputs();
+      }
+    }
+
+    function calculate() {
+      const type = document.getElementById('calculationType').value;
+      const hco3 = parseFloat(document.getElementById('hco3').value);
+      const pco2 = parseFloat(document.getElementById('pco2').value);
+      const ph = parseFloat(document.getElementById('ph').value);
+      const solubilityCoefficient = 0.03;
+      let result = '', explanation = '', quiz = '', summary = '';
+
+      if (type === 'ph' && !isNaN(hco3) && !isNaN(pco2)) {
+        const denom = solubilityCoefficient * pco2;
+        const ratio = hco3 / denom;
+        const logVal = Math.log10(ratio);
+        const calcPh = 6.1 + logVal;
+        result = `Calculated pH: ${calcPh.toFixed(2)}`;
+        explanation = `Steps:<br>1. 0.03 × ${pco2} = ${denom.toFixed(2)}<br>2. ${hco3} / ${denom.toFixed(2)} = ${ratio.toFixed(2)}<br>3. log₁₀(${ratio.toFixed(2)}) = ${logVal.toFixed(2)}<br>4. 6.1 + ${logVal.toFixed(2)} = ${calcPh.toFixed(2)}`;
+        quiz = `Quiz: What does the 0.03 represent?<br><strong>Answer:</strong> It is the solubility coefficient of CO₂ in plasma (in mmol/L/mmHg).`;
+        summary = `You calculated pH from HCO₃⁻ and pCO₂. Final pH = ${calcPh.toFixed(2)}`;
+      } else if (type === 'hco3' && !isNaN(ph) && !isNaN(pco2)) {
+        const exponent = ph - 6.1;
+        const power = Math.pow(10, exponent);
+        const calcHco3 = power * solubilityCoefficient * pco2;
+        result = `Calculated HCO₃⁻: ${calcHco3.toFixed(2)} mmol/L`;
+        explanation = `Steps:<br>1. ${ph} - 6.1 = ${exponent.toFixed(2)}<br>2. 10^${exponent.toFixed(2)} = ${power.toFixed(2)}<br>3. × 0.03 × ${pco2} = ${(power * solubilityCoefficient * pco2).toFixed(2)}`;
+        quiz = `Quiz: What happens to HCO₃⁻ if pCO₂ increases?<br><strong>Answer:</strong> HCO₃⁻ will increase to compensate for respiratory acidosis.`;
+        summary = `You calculated HCO₃⁻ from pH and pCO₂. Final HCO₃⁻ = ${calcHco3.toFixed(2)} mmol/L`;
+      } else if (type === 'pco2' && !isNaN(ph) && !isNaN(hco3)) {
+        const exponent = ph - 6.1;
+        const power = Math.pow(10, exponent);
+        const denom = power * solubilityCoefficient;
+        const calcPco2 = hco3 / denom;
+        result = `Calculated pCO₂: ${calcPco2.toFixed(2)} mmHg`;
+        explanation = `Steps:<br>1. ${ph} - 6.1 = ${exponent.toFixed(2)}<br>2. 10^${exponent.toFixed(2)} = ${power.toFixed(2)}<br>3. × 0.03 = ${denom.toFixed(4)}<br>4. ${hco3} / ${denom.toFixed(4)} = ${calcPco2.toFixed(2)}`;
+        quiz = `Quiz: Why do we use a logarithmic scale in this equation?<br><strong>Answer:</strong> Because pH is a logarithmic measure of hydrogen ion concentration, which allows for a more manageable representation of a wide range of values.`;
+        summary = `You calculated pCO₂ from pH and HCO₃⁻. Final pCO₂ = ${calcPco2.toFixed(2)} mmHg`;
+      } else {
+        result = 'Please enter valid values.';
+      }
+
+      document.getElementById('result').textContent = result;
+      document.getElementById('explanation').innerHTML = explanation;
+      const [question, answer] = quiz.split('<br><strong>Answer:</strong>');
+      document.getElementById('quiz').innerHTML = `${question}<br><button onclick=\"toggleAnswer()\">Show/Hide Answer</button><div id=\"quiz-answer\" style=\"display:none\">Answer: ${answer.trim()}</div>`;
+      document.getElementById('summary').innerHTML = `<strong>Summary:</strong><br>${summary}<br><br><strong>Clinical Relevance:</strong><br>${type === 'ph' ? 'Understanding pH helps evaluate overall acid-base status and determine if the condition is acidotic or alkalotic.' : type === 'hco3' ? 'Bicarbonate levels are essential for assessing metabolic contributions to acid-base disorders.' : 'pCO₂ levels reflect respiratory contributions and compensation in acid-base imbalances.'}`;
+      document.getElementById('summary').style.display = 'block';
+    }
+
+    updateInputs();
+  </script>
+</body>
+</html>
