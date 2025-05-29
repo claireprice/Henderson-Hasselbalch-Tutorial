@@ -27,6 +27,40 @@ Each calculation comes with step-by-step explanations, example values, a quiz pr
 
 ---
 
+## Henderson-Hasselbalch Equation
+
+The core equation used in this tool is:
+
+pH = 6.1 + log₁₀([HCO₃⁻] / (0.03 × pCO₂))
+
+The equation is rearranged internally depending on the user’s choice of unknown variable.
+
+---
+
+## Getting Started
+
+1. **Open the `index.html` file** in any modern browser.
+2. Choose what you want to calculate: **pH**, **HCO₃⁻**, or **pCO₂**.
+3. Optionally, load a sample case to explore clinical examples.
+4. Enter the known values.
+5. Click **Calculate** to view:
+   - Result
+   - Calculation explanation
+   - Quiz question
+   - Clinical summary
+
+---
+
+## Clinical Scenarios Included
+
+- Normal acid-base balance
+- Respiratory acidosis
+- Respiratory alkalosis
+- Metabolic acidosis (Winter’s formula)
+- Metabolic alkalosis
+
+---
+
 ## License
 Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
 
