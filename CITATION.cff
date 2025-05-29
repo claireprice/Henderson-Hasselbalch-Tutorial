@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this tool in teaching, research, or derivative work, please cite it using the metadata below."
+title: "Henderson-Hasselbalch Tutorial"
+authors:
+  - family-names: Price
+    given-names: Claire Louise
+    affiliation: Swansea University Medical School, Swansea SA2 8PP UK
+    orcid: "https://orcid.org/0000-0002-6045-4835"  
+date-released: 2025-05-29
+version: "1.0"
+license: "CC-BY-NC-4.0"
+url: "https://claireprice.github.io/Henderson-Hasselbalch-Tutorial/"
+repository-code: "https://github.com/claireprice/Henderson-Hasselbalch-Tutorial"  # Replace with actual repo URL
+keywords:
+  - acid-base balance
+  - henderson-hasselbalch
+  - pH
+  - bicarbonate
+  - clinical education
+  - respiratory physiology
+  - medical training
+abstract: >
+  The Acid-Base Balance Workshop is an interactive, browser-based teaching tool that guides users
+  through Henderson-Hasselbalch-based acid-base calculations. It enables learners to calculate
+  pH, bicarbonate (HCO₃⁻), or pCO₂ with step-by-step breakdowns, case examples, and embedded clinical relevance.
+  Ideal for healthcare students, educators, and trainers seeking to make acid-base chemistry more intuitive and applied.
+  Intended for educational use only.
